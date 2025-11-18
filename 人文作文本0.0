@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人文初中作文本 - 后台管理</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        light: '#f8fafc',
+                        dark: '#1e293b'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        card: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .transition-all-300 {
+                transition: all 300ms ease-in-out;
+            }
+            .card-hover {
+                @apply transition-all-300 hover:shadow-card-hover hover:-translate-y-1;
+            }
+            .btn {
+                @apply px-4 py-2 rounded-md font-medium transition-all-300 focus:outline-none focus:ring-2 focus:ring-offset-2;
+            }
+            .btn-primary {
+                @apply bg-primary text-white hover:bg-blue-600 focus:ring-blue-500;
+            }
+            .btn-secondary {
+                @apply bg-secondary text-white hover:bg-slate-600 focus:ring-slate-500;
+            }
+            .btn-success {
+                @apply bg-success text-white hover:bg-green-600 focus:ring-green-500;
+            }
+            .btn-warning {
+                @apply bg-warning text-white hover:bg-amber-600 focus:ring-amber-500;
+            }
+            .btn-danger {
+                @apply bg-danger text-white hover:bg-red-600 focus:ring-red-500;
+            }
+            .btn-outline {
+                @apply border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500;
+            }
+            .form-input {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary;
+            }
+            .form-label {
+                @apply block text-sm font-medium text-gray-700 mb-1;
+            }
+            .form-group {
+                @apply mb-4;
+            }
+            .badge {
+                @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+            }
+            .badge-success {
+                @apply bg-green-100 text-green-800;
+            }
+            .badge-warning {
+                @apply bg-amber-100 text-amber-800;
+            }
+            .badge-danger {
+                @apply bg-red-100 text-red-800;
+            }
+            .star-rating {
+                @apply flex items-center;
+            }
+            .star {
+                @apply text-gray-300 text-xl cursor-pointer transition-all-300;
+            }
+            .star.filled {
+                @apply text-yellow-400;
+            }
+            .modal {
+                @apply fixed inset-0 z-50 overflow-y-auto hidden;
+            }
+            .modal.show {
+                @apply block;
+            }
+            .modal-backdrop {
+                @apply fixed inset-0 bg-black bg-opacity-50;
+            }
+            .modal-content {
+                @apply bg-white rounded-lg shadow-xl max-w-3xl mx-auto my-10 p-6 relative;
+            }
+            .modal-close {
+                @apply absolute top-4 right-4 text-gray-400 hover:text-gray-500;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边导航栏 -->
+        <aside class="bg-dark text-white w-64 flex-shrink-0 hidden md:block">
+            <div class="p-4">
+                <h1 class="text-xl font-bold">人文初中作文本</h1>
+                <p class="text-sm text-gray-400">教研老师管理后台</p>
+            </div>
+            <nav class="mt-6">
+                <ul>
+                    <li>
+                        <a href="#" class="flex items-center px-4 py-3 bg-blue-700 text-white">
+                            <i class="fa fa-book mr-3"></i>
+                            <span>作文主题管理</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 transition-all-300">
+                            <i class="fa fa-cog mr-3"></i>
+                            <span>系统设置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 移动端导航栏 -->
+        <div class="bg-dark text-white w-full h-16 flex items-center justify-between px-4 md:hidden">
+            <h1 class="text-xl font-bold">人文初中作文本</h1>
+            <button id="mobile-menu-button" class="text-white">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="fixed inset-0 bg-dark z-40 transform translate-x-full transition-transform duration-300 md:hidden">
+            <div class="p-4 flex justify-between items-center">
+                <h1 class="text-xl font-bold text-white">人文初中作文本</h1>
+                <button id="mobile-menu-close" class="text-white">
+                    <i class="fa fa-times text-xl"></i>
+                </button>
+            </div>
+            <nav class="mt-6">
+                <ul>
+                    <li>
+                        <a href="#" class="flex items-center px-4 py-3 bg-blue-700 text-white">
+                            <i class="fa fa-book mr-3"></i>
+                            <span>作文主题管理</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="flex items-center px-4 py-3 text-gray-300 hover:bg-gray-700 transition-all-300">
+                            <i class="fa fa-cog mr-3"></i>
+                            <span>系统设置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <!-- 主内容区 -->
+        <main class="flex-1 overflow-y-auto bg-gray-100 md:p-6 p-4">
+            <div class="mb-6 flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-gray-800">作文主题管理</h2>
+                <div class="flex space-x-2">
+                    <button id="add-subject-btn" class="btn btn-primary">
+                        <i class="fa fa-plus mr-2"></i>新增子主题
+                    </button>
+                    <button id="save-all-btn" class="btn btn-success">
+                        <i class="fa fa-save mr-2"></i>保存所有更改
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">使用说明</h3>
+                <ul class="list-disc pl-5 text-gray-600 space-y-2">
+                    <li>点击主题卡片可展开/折叠查看子主题</li>
+                    <li>点击子主题的"编辑"按钮可填写详细内容</li>
+                    <li>所有必填字段填写完成后，"解锁"按钮将变为可用状态</li>
+                    <li>点击"解锁"按钮后，学生将可以在学习机上查看该主题/子主题</li>
+                    <li>解锁后状态不可更改，请确保内容完整无误</li>
+                </ul>
+            </div>
+
+            <!-- 主题列表 -->
+            <div id="themes-container" class="space-y-6">
+                <!-- 主题卡片将通过JavaScript动态生成 -->
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增子主题模态框 -->
+    <div id="add-subject-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="close-add-subject-modal">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">新增子主题</h3>
+            <form id="add-subject-form">
+                <div class="form-group">
+                    <label class="form-label" for="parent-theme">所属主题</label>
+                    <select id="parent-theme" class="form-input" required>
+                        <!-- 选项将通过JavaScript动态生成 -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="subtheme-name">子主题名称</label>
+                    <input type="text" id="subtheme-name" class="form-input" placeholder="请输入子主题名称" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="subtheme-description">子主题描述</label>
+                    <textarea id="subtheme-description" class="form-input" rows="3" placeholder="请输入子主题描述"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" id="cancel-add-subject" class="btn btn-outline">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 编辑内容模态框 -->
+    <div id="edit-content-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="close-edit-content-modal">
+                <i class="fa fa-times text-xl"></i>
+            </button>
+            <h3 class="text-xl font-bold text-gray-800 mb-4">
+                <span id="edit-modal-title">编辑内容</span>
+                <span id="edit-modal-status" class="ml-2 badge badge-warning">未解锁</span>
+            </h3>
+            <form id="edit-content-form">
+                <input type="hidden" id="edit-subject-id">
+                <input type="hidden" id="edit-subtheme-id">
+                
+                <div class="form-group">
+                    <label class="form-label" for="paper-id">Paper ID <span class="text-red-500">*</span></label>
+                    <input type="text" id="paper-id" class="form-input" placeholder="请输入Paper ID" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="essay-file">上传优秀范文 (docx) <span class="text-red-500">*</span></label>
+                    <input type="file" id="essay-file" class="form-input" accept=".docx" required>
+                    <div id="file-preview" class="mt-2 text-sm text-gray-500 hidden">
+                        <i class="fa fa-file-word-o mr-1"></i>
+                        <span id="file-name"></span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="source">作品来源 <span class="text-red-500">*</span></label>
+                    <input type="text" id="source" class="form-input" placeholder="请输入作品来源" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="author">作者 <span class="text-red-500">*</span></label>
+                    <input type="text" id="author" class="form-input" placeholder="请输入作者" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="recommendation-name">老师力荐名称 <span class="text-red-500">*</span></label>
+                    <input type="text" id="recommendation-name" class="form-input" placeholder="请输入老师力荐名称" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">力荐星级 <span class="text-red-500">*</span></label>
+                    <div class="star-rating" id="rating-stars">
+                        <i class="fa fa-star star" data-rating="1"></i>
+                        <i class="fa fa-star star" data-rating="2"></i>
+                        <i class="fa fa-star star" data-rating="3"></i>
+                        <i class="fa fa-star star" data-rating="4"></i>
+                        <i class="fa fa-star star" data-rating="5"></i>
+                    </div>
+                    <input type="hidden" id="rating" value="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="instructor">指导老师 <span class="text-red-500">*</span></label>
+                    <input type="text" id="instructor" class="form-input" placeholder="请输入指导老师" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="excellent-essay">优秀范文 <span class="text-red-500">*</span></label>
+                    <textarea id="excellent-essay" class="form-input" rows="6" placeholder="请输入优秀范文内容" required></textarea>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-6">
+                    <button type="button" id="cancel-edit-content" class="btn btn-outline">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 解锁确认模态框 -->
+    <div id="unlock-confirm-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content max-w-md">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">确认解锁</h3>
+            <p class="text-gray-600 mb-6">您确定要解锁此内容吗？解锁后学生将可以在学习机上查看，且解锁状态不可更改。</p>
+            <div class="flex justify-end space-x-3">
+                <button id="cancel-unlock" class="btn btn-outline">取消</button>
+                <button id="confirm-unlock" class="btn btn-success">确认解锁</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 验证失败提示模态框 -->
+    <div id="validation-error-modal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content max-w-md">
+            <h3 class="text-xl font-bold text-red-600 mb-4">
+                <i class="fa fa-exclamation-circle mr-2"></i>验证失败
+            </h3>
+            <p class="text-gray-600 mb-4">以下必填字段尚未填写完整：</p>
+            <ul id="missing-fields" class="list-disc pl-5 text-gray-600 mb-6">
+                <!-- 缺失字段将通过JavaScript动态生成 -->
+            </ul>
+            <div class="flex justify-end">
+                <button id="close-validation-error" class="btn btn-primary">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据
+        const themesData = [
+            {
+                id: 'theme1',
+                name: '成长感悟',
+                description: '记录成长过程中的思考与感悟',
+                unlocked: true,
+                subThemes: [
+                    {
+                        id: 'sub1-1',
+                        name: '我的第一次',
+                        description: '描述人生中的各种第一次经历',
+                        unlocked: true,
+                        content: {
+                            paperId: 'P10001',
+                            essayFile: 'first_experience.docx',
+                            source: '2023年全国中学生作文大赛',
+                            author: '张三',
+                            recommendationName: '最具感染力奖',
+                            rating: 4,
+                            instructor: '王老师',
+                            excellentEssay: '那是一个阳光明媚的下午，我第一次独自骑自行车...'
+                        }
+                    },
+                    {
+                        id: 'sub1-2',
+                        name: '挫折与成长',
+                        description: '分享面对挫折的经历与收获',
+                        unlocked: false,
+                        content: {
+                            paperId: '',
+                            essayFile: '',
+                            source: '',
+                            author: '',
+                            recommendationName: '',
+                            rating: 0,
+                            instructor: '',
+                            excellentEssay: ''
+                        }
+                    }
+                ]
+            },
+            {
+                id: 'theme2',
+                name: '亲情友情',
+                description: '表达对亲情、友情的理解与珍视',
+                unlocked: true,
+                subThemes: [
+                    {
+                        id: 'sub2-1',
+                        name: '家庭的温暖',
+                        description: '描述家庭中的温暖瞬间',
+                        unlocked: true,
+                        content: {
+                            paperId: 'P10002',
+                            essayFile: 'family_warmth.docx',
+                            source: '校内作文比赛一等奖',
+                            author: '李四',
+                            recommendationName: '情感真挚奖',
+                            rating: 5,
+                            instructor: '张老师',
+                            excellentEssay: '每当我遇到困难时，妈妈总是第一个出现在我身边...'
+                        }
+                    }
+                ]
+            },
+            {
+                id: 'theme3',
+                name: '社会观察',
+                description: '记录对社会现象的观察与思考',
+                unlocked: false,
+                subThemes: [
+                    {
+                        id: 'sub3-1',
+                        name: '城市变迁',
+                        description: '观察并记录城市的发展变化',
+                        unlocked: false,
+                        content: {
+                            paperId: '',
+                            essayFile: '',
+                            source: '',
+                            author: '',
+                            recommendationName: '',
+                            rating: 0,
+                            instructor: '',
+                            excellentEssay: ''
+                        }
+                    }
+                ]
+            },
+            {
+                id: 'theme4',
+                name: '文化传承',
+                description: '探讨传统文化的传承与发展',
+                unlocked: false,
+                subThemes: []
+            },
+            {
+                id: 'theme5',
+                name: '自然之美',
+                description: '描绘自然景观，表达对自然的热爱',
+                unlocked: false,
+                subThemes: []
+            },
+            {
+                id: 'theme6',
+                name: '科技与生活',
+                description: '思考科技发展对生活的影响',
+                unlocked: false,
+                subThemes: []
+            },
+            {
+                id: 'theme7',
+                name: '书香致远',
+                description: '分享阅读心得与书籍对个人的影响',
+                unlocked: false,
+                subThemes: []
+            },
+            {
+                id: 'theme8',
+                name: '梦想启航',
+                description: '畅谈理想与未来规划',
+                unlocked: false,
+                subThemes: []
+            }
+        ];
+
+        // DOM元素
+        const themesContainer = document.getElementById('themes-container');
+        const addSubjectBtn = document.getElementById('add-subject-btn');
+        const saveAllBtn = document.getElementById('save-all-btn');
+        const addSubjectModal = document.getElementById('add-subject-modal');
+        const closeAddSubjectModal = document.getElementById('close-add-subject-modal');
+        const cancelAddSubject = document.getElementById('cancel-add-subject');
+        const addSubjectForm = document.getElementById('add-subject-form');
+        const parentThemeSelect = document.getElementById('parent-theme');
+        const editContentModal = document.getElementById('edit-content-modal');
+        const closeEditContentModal = document.getElementById('close-edit-content-modal');
+        const cancelEditContent = document.getElementById('cancel-edit-content');
+        const editContentForm = document.getElementById('edit-content-form');
+        const editModalTitle = document.getElementById('edit-modal-title');
+        const editModalStatus = document.getElementById('edit-modal-status');
+        const unlockConfirmModal = document.getElementById('unlock-confirm-modal');
+        const cancelUnlock = document.getElementById('cancel-unlock');
+        const confirmUnlock = document.getElementById('confirm-unlock');
+        const validationErrorModal = document.getElementById('validation-error-modal');
+        const closeValidationError = document.getElementById('close-validation-error');
+        const missingFieldsList = document.getElementById('missing-fields');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const ratingStars = document.getElementById('rating-stars');
+        const stars = ratingStars.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+        const filePreview = document.getElementById('file-preview');
+        const fileName = document.getElementById('file-name');
+        const essayFileInput = document.getElementById('essay-file');
+
+        // 当前编辑的主题和子主题ID
+        let currentThemeId = null;
+        let currentSubthemeId = null;
+
+        // 初始化页面
+        function init() {
+            renderThemes();
+            populateParentThemeSelect();
+            setupEventListeners();
+        }
+
+        // 渲染主题列表
+        function renderThemes() {
+            themesContainer.innerHTML = '';
+            
+            themesData.forEach(theme => {
+                const themeCard = document.createElement('div');
+                themeCard.className = 'bg-white rounded-lg shadow-md overflow-hidden';
+                themeCard.dataset.themeId = theme.id;
+                
+                const themeHeader = document.createElement('div');
+                themeHeader.className = 'flex justify-between items-center p-4 border-b cursor-pointer hover:bg-gray-50';
+                themeHeader.innerHTML = `
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">${theme.name}</h3>
+                        <p class="text-sm text-gray-600">${theme.description}</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="badge ${theme.unlocked ? 'badge-success' : 'badge-warning'}">
+                            ${theme.unlocked ? '已解锁' : '未解锁'}
+                        </span>
+                        <button class="text-gray-500 hover:text-gray-700 toggle-subthemes">
+                            <i class="fa fa-chevron-down"></i>
+                        </button>
+                    </div>
+                `;
+                
+                const subthemesContainer = document.createElement('div');
+                subthemesContainer.className = 'p-4 bg-gray-50 hidden';
+                
+                if (theme.subThemes.length > 0) {
+                    const subthemesList = document.createElement('ul');
+                    subthemesList.className = 'divide-y';
+                    
+                    theme.subThemes.forEach(subtheme => {
+                        const subthemeItem = document.createElement('li');
+                        subthemeItem.className = 'py-3 flex justify-between items-center';
+                        subthemeItem.dataset.subthemeId = subtheme.id;
+                        
+                        const subthemeInfo = document.createElement('div');
+                        subthemeInfo.innerHTML = `
+                            <h4 class="font-medium text-gray-800">${subtheme.name}</h4>
+                            <p class="text-sm text-gray-600">${subtheme.description}</p>
+                        `;
+                        
+                        const subthemeActions = document.createElement('div');
+                        subthemeActions.className = 'flex items-center space-x-2';
+                        
+                        const statusBadge = document.createElement('span');
+                        statusBadge.className = `badge ${subtheme.unlocked ? 'badge-success' : 'badge-warning'}`;
+                        statusBadge.textContent = subtheme.unlocked ? '已解锁' : '未解锁';
+                        
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'btn btn-outline btn-sm';
+                        editBtn.innerHTML = '<i class="fa fa-pencil mr-1"></i>编辑';
+                        editBtn.dataset.themeId = theme.id;
+                        editBtn.dataset.subthemeId = subtheme.id;
+                        
+                        const unlockBtn = document.createElement('button');
+                        unlockBtn.className = `btn ${subtheme.unlocked ? 'btn-secondary' : 'btn-success'} btn-sm`;
+                        unlockBtn.innerHTML = `<i class="fa fa-${subtheme.unlocked ? 'check' : 'lock-open'} mr-1"></i>${subtheme.unlocked ? '已解锁' : '解锁'}`;
+                        unlockBtn.dataset.themeId = theme.id;
+                        unlockBtn.dataset.subthemeId = subtheme.id;
+                        unlockBtn.disabled = subtheme.unlocked;
+                        
+                        subthemeActions.appendChild(statusBadge);
+                        subthemeActions.appendChild(editBtn);
+                        subthemeActions.appendChild(unlockBtn);
+                        
+                        subthemeItem.appendChild(subthemeInfo);
+                        subthemeItem.appendChild(subthemeActions);
+                        subthemesList.appendChild(subthemeItem);
+                    });
+                    
+                    subthemesContainer.appendChild(subthemesList);
+                } else {
+                    subthemesContainer.innerHTML = '<p class="text-gray-500 text-center py-4">暂无子主题，点击"新增子主题"按钮添加</p>';
+                }
+                
+                themeCard.appendChild(themeHeader);
+                themeCard.appendChild(subthemesContainer);
+                themesContainer.appendChild(themeCard);
+                
+                // 添加主题展开/折叠事件
+                themeHeader.addEventListener('click', () => {
+                    subthemesContainer.classList.toggle('hidden');
+                    const icon = themeHeader.querySelector('.toggle-subthemes i');
+                    icon.classList.toggle('fa-chevron-down');
+                    icon.classList.toggle('fa-chevron-up');
+                });
+            });
+        }
+
+        // 填充父主题下拉选择框
+        function populateParentThemeSelect() {
+            parentThemeSelect.innerHTML = '';
+            
+            themesData.forEach(theme => {
+                const option = document.createElement('option');
+                option.value = theme.id;
+                option.textContent = theme.name;
+                parentThemeSelect.appendChild(option);
+            });
+        }
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 新增子主题按钮
+            addSubjectBtn.addEventListener('click', () => {
+                addSubjectModal.classList.add('show');
+            });
+            
+            // 关闭新增子主题模态框
+            closeAddSubjectModal.addEventListener('click', () => {
+                addSubjectModal.classList.remove('show');
+            });
+            
+            cancelAddSubject.addEventListener('click', () => {
+                addSubjectModal.classList.remove('show');
+            });
+            
+            // 新增子主题表单提交
+            addSubjectForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const parentThemeId = parentThemeSelect.value;
+                const subthemeName = document.getElementById('subtheme-name').value;
+                const subthemeDescription = document.getElementById('subtheme-description').value;
+                
+                const parentTheme = themesData.find(theme => theme.id === parentThemeId);
+                if (parentTheme) {
+                    const newSubtheme = {
+                        id: `sub${parentThemeId.replace('theme', '')}-${parentTheme.subThemes.length + 1}`,
+                        name: subthemeName,
+                        description: subthemeDescription,
+                        unlocked: false,
+                        content: {
+                            paperId: '',
+                            essayFile: '',
+                            source: '',
+                            author: '',
+                            recommendationName: '',
+                            rating: 0,
+                            instructor: '',
+                            excellentEssay: ''
+                        }
+                    };
+                    
+                    parentTheme.subThemes.push(newSubtheme);
+                    renderThemes();
+                    addSubjectModal.classList.remove('show');
+                    addSubjectForm.reset();
+                    
+                    // 显示成功提示
+                    alert('子主题添加成功！');
+                }
+            });
+            
+            // 关闭编辑内容模态框
+            closeEditContentModal.addEventListener('click', () => {
+                editContentModal.classList.remove('show');
+            });
+            
+            cancelEditContent.addEventListener('click', () => {
+                editContentModal.classList.remove('show');
+            });
+            
+            // 编辑内容表单提交
+            editContentForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const themeId = document.getElementById('edit-subject-id').value;
+                const subthemeId = document.getElementById('edit-subtheme-id').value;
+                const paperId = document.getElementById('paper-id').value;
+                const source = document.getElementById('source').value;
+                const author = document.getElementById('author').value;
+                const recommendationName = document.getElementById('recommendation-name').value;
+                const rating = document.getElementById('rating').value;
+                const instructor = document.getElementById('instructor').value;
+                const excellentEssay = document.getElementById('excellent-essay').value;
+                
+                const theme = themesData.find(t => t.id === themeId);
+                if (theme) {
+                    const subtheme = theme.subThemes.find(st => st.id === subthemeId);
+                    if (subtheme) {
+                        subtheme.content.paperId = paperId;
+                        subtheme.content.source = source;
+                        subtheme.content.author = author;
+                        subtheme.content.recommendationName = recommendationName;
+                        subtheme.content.rating = parseInt(rating);
+                        subtheme.content.instructor = instructor;
+                        subtheme.content.excellentEssay = excellentEssay;
+                        
+                        // 如果上传了新文件，更新文件名
+                        if (essayFileInput.files.length > 0) {
+                            subtheme.content.essayFile = essayFileInput.files[0].name;
+                        }
+                        
+                        renderThemes();
+                        editContentModal.classList.remove('show');
+                        
+                        // 显示成功提示
+                        alert('内容保存成功！');
+                    }
+                }
+            });
+            
+            // 取消解锁
+            cancelUnlock.addEventListener('click', () => {
+                unlockConfirmModal.classList.remove('show');
+            });
+            
+            // 确认解锁
+            confirmUnlock.addEventListener('click', () => {
+                const theme = themesData.find(t => t.id === currentThemeId);
+                if (theme) {
+                    const subtheme = theme.subThemes.find(st => st.id === currentSubthemeId);
+                    if (subtheme) {
+                        subtheme.unlocked = true;
+                        renderThemes();
+                        unlockConfirmModal.classList.remove('show');
+                        
+                        // 显示成功提示
+                        alert('解锁成功！学生现在可以在学习机上查看此内容。');
+                    }
+                }
+            });
+            
+            // 关闭验证错误提示
+            closeValidationError.addEventListener('click', () => {
+                validationErrorModal.classList.remove('show');
+            });
+            
+            // 星级评分
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const rating = star.dataset.rating;
+                    ratingInput.value = rating;
+                    
+                    stars.forEach(s => {
+                        if (s.dataset.rating <= rating) {
+                            s.classList.add('filled');
+                        } else {
+                            s.classList.remove('filled');
+                        }
+                    });
+                });
+            });
+            
+            // 文件上传预览
+            essayFileInput.addEventListener('change', () => {
+                if (essayFileInput.files.length > 0) {
+                    fileName.textContent = essayFileInput.files[0].name;
+                    filePreview.classList.remove('hidden');
+                } else {
+                    filePreview.classList.add('hidden');
+                }
+            });
+            
+            // 移动端菜单
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.remove('translate-x-full');
+            });
+            
+            mobileMenuClose.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+            });
+            
+            // 保存所有更改
+            saveAllBtn.addEventListener('click', () => {
+                // 在实际应用中，这里会发送数据到服务器
+                alert('所有更改已保存！');
+            });
+            
+            // 委托事件处理 - 编辑按钮
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('button[data-theme-id][data-subtheme-id].btn-outline')) {
+                    const btn = e.target.closest('button');
+                    const themeId = btn.dataset.themeId;
+                    const subthemeId = btn.dataset.subthemeId;
+                    
+                    openEditModal(themeId, subthemeId);
+                }
+            });
+            
+            // 委托事件处理 - 解锁按钮
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('button[data-theme-id][data-subtheme-id].btn-success:not(:disabled)')) {
+                    const btn = e.target.closest('button');
+                    const themeId = btn.dataset.themeId;
+                    const subthemeId = btn.dataset.subthemeId;
+                    
+                    validateAndUnlock(themeId, subthemeId);
+                }
+            });
+        }
+
+        // 打开编辑模态框
+        function openEditModal(themeId, subthemeId) {
+            const theme = themesData.find(t => t.id === themeId);
+            if (theme) {
+                const subtheme = theme.subThemes.find(st => st.id === subthemeId);
+                if (subtheme) {
+                    currentThemeId = themeId;
+                    currentSubthemeId = subthemeId;
+                    
+                    document.getElementById('edit-subject-id').value = themeId;
+                    document.getElementById('edit-subtheme-id').value = subthemeId;
+                    editModalTitle.textContent = `${theme.name} - ${subtheme.name}`;
+                    
+                    if (subtheme.unlocked) {
+                        editModalStatus.className = 'ml-2 badge badge-success';
+                        editModalStatus.textContent = '已解锁';
+                    } else {
+                        editModalStatus.className = 'ml-2 badge badge-warning';
+                        editModalStatus.textContent = '未解锁';
+                    }
+                    
+                    document.getElementById('paper-id').value = subtheme.content.paperId || '';
+                    document.getElementById('source').value = subtheme.content.source || '';
+                    document.getElementById('author').value = subtheme.content.author || '';
+                    document.getElementById('recommendation-name').value = subtheme.content.recommendationName || '';
+                    document.getElementById('instructor').value = subtheme.content.instructor || '';
+                    document.getElementById('excellent-essay').value = subtheme.content.excellentEssay || '';
+                    
+                    // 设置星级评分
+                    const rating = subtheme.content.rating || 0;
+                    ratingInput.value = rating;
+                    stars.forEach(star => {
+                        if (star.dataset.rating <= rating) {
+                            star.classList.add('filled');
+                        } else {
+                            star.classList.remove('filled');
+                        }
+                    });
+                    
+                    // 文件预览
+                    if (subtheme.content.essayFile) {
+                        fileName.textContent = subtheme.content.essayFile;
+                        filePreview.classList.remove('hidden');
+                    } else {
+                        filePreview.classList.add('hidden');
+                    }
+                    
+                    // 重置文件输入
+                    essayFileInput.value = '';
+                    
+                    editContentModal.classList.add('show');
+                }
+            }
+        }
+
+        // 验证并解锁
+        function validateAndUnlock(themeId, subthemeId) {
+            const theme = themesData.find(t => t.id === themeId);
+            if (theme) {
+                const subtheme = theme.subThemes.find(st => st.id === subthemeId);
+                if (subtheme) {
+                    const missingFields = [];
+                    
+                    // 验证必填字段
+                    if (!subtheme.content.paperId) missingFields.push('Paper ID');
+                    if (!subtheme.content.essayFile) missingFields.push('优秀范文文件');
+                    if (!subtheme.content.source) missingFields.push('作品来源');
+                    if (!subtheme.content.author) missingFields.push('作者');
+                    if (!subtheme.content.recommendationName) missingFields.push('老师力荐名称');
+                    if (!subtheme.content.rating || subtheme.content.rating === 0) missingFields.push('力荐星级');
+                    if (!subtheme.content.instructor) missingFields.push('指导老师');
+                    if (!subtheme.content.excellentEssay) missingFields.push('优秀范文内容');
+                    
+                    if (missingFields.length > 0) {
+                        // 显示验证失败提示
+                        showValidationError(missingFields);
+                    } else {
+                        // 显示解锁确认
+                        currentThemeId = themeId;
+                        currentSubthemeId = subthemeId;
+                        unlockConfirmModal.classList.add('show');
+                    }
+                }
+            }
+        }
+
+        // 显示验证失败提示
+        function showValidationError(missingFields) {
+            missingFieldsList.innerHTML = '';
+            
+            missingFields.forEach(field => {
+                const li = document.createElement('li');
+                li.textContent = field;
+                missingFieldsList.appendChild(li);
+            });
+            
+            validationErrorModal.classList.add('show');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
