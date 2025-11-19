@@ -215,41 +215,20 @@
             <h3 class="text-xl font-bold text-gray-800 mb-4">
                 <span id="edit-modal-title">编辑内容</span>
             </h3>
+            
             <form id="edit-content-form">
                 <input type="hidden" id="edit-subject-id">
                 <input type="hidden" id="edit-subtheme-id">
                 
                 <div class="form-group">
-                    <label class="form-label" for="paper-id">Paper ID <span class="text-red-500">*</span></label>
-                    <input type="text" id="paper-id" class="form-input" placeholder="请输入Paper ID" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="source">作品来源 <span class="text-red-500">*</span></label>
-                    <input type="text" id="source" class="form-input" placeholder="请输入作品来源" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="recommendation-teacher">力荐老师名称 <span class="text-red-500">*</span></label>
-                    <input type="text" id="recommendation-teacher" class="form-input" placeholder="请输入力荐老师名称" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">力荐星级 <span class="text-red-500">*</span></label>
-                    <div class="star-rating" id="rating-stars">
-                        <i class="fa fa-star star" data-rating="1"></i>
-                        <i class="fa fa-star star" data-rating="2"></i>
-                        <i class="fa fa-star star" data-rating="3"></i>
-                        <i class="fa fa-star star" data-rating="4"></i>
-                        <i class="fa fa-star star" data-rating="5"></i>
-                    </div>
-                    <input type="hidden" id="rating" value="0" required>
+                    <label class="form-label" for="paper-id">Paper ID</label>
+                    <input type="text" id="paper-id" class="form-input" placeholder="请输入Paper ID">
                 </div>
                 
                 <!-- 多篇优秀范文管理区域 -->
                 <div class="form-group">
                     <div class="flex justify-between items-center mb-2">
-                        <label class="form-label">优秀范文列表 <span class="text-red-500">*</span></label>
+                        <label class="form-label">优秀范文列表</label>
                         <button type="button" id="add-essay-btn" class="btn btn-success btn-sm">
                             <i class="fa fa-plus mr-1"></i>添加范文
                         </button>
@@ -285,6 +264,28 @@
                 <input type="hidden" id="essay-index" value="-1"> <!-- -1表示新增 -->
                 
                 <div class="form-group">
+                    <label class="form-label" for="essay-source">作品来源 <span class="text-red-500">*</span></label>
+                    <input type="text" id="essay-source" class="form-input" placeholder="请输入作品来源" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="essay-recommendation-teacher">力荐老师名称 <span class="text-red-500">*</span></label>
+                    <input type="text" id="essay-recommendation-teacher" class="form-input" placeholder="请输入力荐老师名称" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">力荐星级 <span class="text-red-500">*</span></label>
+                    <div class="star-rating" id="essay-rating-stars">
+                        <i class="fa fa-star star" data-rating="1"></i>
+                        <i class="fa fa-star star" data-rating="2"></i>
+                        <i class="fa fa-star star" data-rating="3"></i>
+                        <i class="fa fa-star star" data-rating="4"></i>
+                        <i class="fa fa-star star" data-rating="5"></i>
+                    </div>
+                    <input type="hidden" id="essay-rating" value="0" required>
+                </div>
+                
+                <div class="form-group">
                     <label class="form-label" for="essay-author">作者 <span class="text-red-500">*</span></label>
                     <input type="text" id="essay-author" class="form-input" placeholder="请输入作者" required>
                 </div>
@@ -308,68 +309,43 @@
     </div>
 
     <script>
-        // 模拟数据 - 增加了多篇范文的结构
+        // 模拟数据 - 使用指定的八个主题
         const themesData = [
             {
                 id: 'theme1',
-                name: '成长感悟',
-                description: '记录成长过程中的思考与感悟',
+                name: '成长励志',
+                description: '记录成长过程中的励志故事与感悟',
                 subThemes: [
                     {
                         id: 'sub1-1',
-                        name: '我的第一次',
+                        name: '我的成长故事',
                         content: {
                             paperId: 'P10001',
-                            source: '2023年全国中学生作文大赛',
-                            recommendationTeacher: '王老师',
-                            rating: 4,
                             essays: [
                                 {
+                                    source: '2023年全国中学生作文大赛',
+                                    recommendationTeacher: '王老师',
+                                    rating: 4,
                                     author: '张三',
                                     instructor: '李老师',
-                                    content: '那是一个阳光明媚的下午，我第一次独自骑自行车...'
-                                },
-                                {
-                                    author: '王五',
-                                    instructor: '赵老师',
-                                    content: '人生中有许多第一次，而最让我难忘的是第一次登台演讲...'
+                                    content: '成长的道路上，我遇到过许多困难，但每一次克服困难都让我变得更强大...'
                                 }
                             ]
-                        }
-                    },
-                    {
-                        id: 'sub1-2',
-                        name: '挫折与成长',
-                        content: {
-                            paperId: '',
-                            source: '',
-                            recommendationTeacher: '',
-                            rating: 0,
-                            essays: []
                         }
                     }
                 ]
             },
             {
                 id: 'theme2',
-                name: '亲情友情',
-                description: '表达对亲情、友情的理解与珍视',
+                name: '情感体验',
+                description: '表达生活中的各种情感体验与感悟',
                 subThemes: [
                     {
                         id: 'sub2-1',
-                        name: '家庭的温暖',
+                        name: '那一刻的感动',
                         content: {
                             paperId: 'P10002',
-                            source: '校内作文比赛一等奖',
-                            recommendationTeacher: '张老师',
-                            rating: 5,
-                            essays: [
-                                {
-                                    author: '李四',
-                                    instructor: '刘老师',
-                                    content: '每当我遇到困难时，妈妈总是第一个出现在我身边...'
-                                }
-                            ]
+                            essays: []
                         }
                     }
                 ]
@@ -381,12 +357,9 @@
                 subThemes: [
                     {
                         id: 'sub3-1',
-                        name: '城市变迁',
+                        name: '身边的变化',
                         content: {
                             paperId: '',
-                            source: '',
-                            recommendationTeacher: '',
-                            rating: 0,
                             essays: []
                         }
                     }
@@ -394,33 +367,78 @@
             },
             {
                 id: 'theme4',
-                name: '文化传承',
-                description: '探讨传统文化的传承与发展',
-                subThemes: []
+                name: '传统文化',
+                description: '探索和传承中华优秀传统文化',
+                subThemes: [
+                    {
+                        id: 'sub4-1',
+                        name: '传统节日的记忆',
+                        content: {
+                            paperId: 'P10004',
+                            essays: []
+                        }
+                    }
+                ]
             },
             {
                 id: 'theme5',
-                name: '自然之美',
-                description: '描绘自然景观，表达对自然的热爱',
-                subThemes: []
+                name: '读书博学',
+                description: '分享读书心得与知识积累',
+                subThemes: [
+                    {
+                        id: 'sub5-1',
+                        name: '一本影响我的书',
+                        content: {
+                            paperId: '',
+                            essays: []
+                        }
+                    }
+                ]
             },
             {
                 id: 'theme6',
-                name: '科技与生活',
-                description: '思考科技发展对生活的影响',
-                subThemes: []
+                name: '家国情怀',
+                description: '表达对家庭、国家的热爱与情感',
+                subThemes: [
+                    {
+                        id: 'sub6-1',
+                        name: '我爱我的祖国',
+                        content: {
+                            paperId: 'P10006',
+                            essays: []
+                        }
+                    }
+                ]
             },
             {
                 id: 'theme7',
-                name: '书香致远',
-                description: '分享阅读心得与书籍对个人的影响',
-                subThemes: []
+                name: '科幻想象',
+                description: '展现科学幻想与未来想象',
+                subThemes: [
+                    {
+                        id: 'sub7-1',
+                        name: '未来的世界',
+                        content: {
+                            paperId: '',
+                            essays: []
+                        }
+                    }
+                ]
             },
             {
                 id: 'theme8',
-                name: '梦想启航',
-                description: '畅谈理想与未来规划',
-                subThemes: []
+                name: '哲理感悟',
+                description: '对生活与人生的哲学思考',
+                subThemes: [
+                    {
+                        id: 'sub8-1',
+                        name: '生活中的智慧',
+                        content: {
+                            paperId: 'P10008',
+                            essays: []
+                        }
+                    }
+                ]
             }
         ];
 
@@ -445,9 +463,6 @@
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenuClose = document.getElementById('mobile-menu-close');
         const mobileMenu = document.getElementById('mobile-menu');
-        const ratingStars = document.getElementById('rating-stars');
-        const stars = ratingStars.querySelectorAll('.star');
-        const ratingInput = document.getElementById('rating');
         const essaysContainer = document.getElementById('essays-container');
         const noEssaysMessage = document.getElementById('no-essays-message');
         const addEssayBtn = document.getElementById('add-essay-btn');
@@ -456,6 +471,9 @@
         const cancelEssayEdit = document.getElementById('cancel-essay-edit');
         const editEssayForm = document.getElementById('edit-essay-form');
         const essayModalTitle = document.getElementById('essay-modal-title');
+        const essayRatingStars = document.getElementById('essay-rating-stars');
+        const essayStars = essayRatingStars.querySelectorAll('.star');
+        const essayRatingInput = document.getElementById('essay-rating');
 
         // 初始化页面
         function init() {
@@ -493,6 +511,9 @@
                     subthemesList.className = 'divide-y';
                     
                     theme.subThemes.forEach(subtheme => {
+                        // 计算完成状态（仅用于信息展示，不显示标记）
+                        const isPaperIdComplete = !!subtheme.content.paperId;
+                        
                         const subthemeItem = document.createElement('li');
                         subthemeItem.className = 'py-3 flex justify-between items-center';
                         subthemeItem.dataset.subthemeId = subtheme.id;
@@ -500,7 +521,7 @@
                         const subthemeInfo = document.createElement('div');
                         subthemeInfo.innerHTML = `
                             <h4 class="font-medium text-gray-800">${subtheme.name}</h4>
-                            <p class="text-xs text-gray-500">${subtheme.content.essays?.length || 0}篇范文</p>
+                            <p class="text-xs text-gray-500">${subtheme.content.essays?.length || 0}篇范文 | ${isPaperIdComplete ? '已填写Paper ID' : '未填写Paper ID'}</p>
                         `;
                         
                         const subthemeActions = document.createElement('div');
@@ -556,75 +577,97 @@
                 noEssaysMessage.classList.remove('hidden');
                 essaysContainer.innerHTML = '';
                 essaysContainer.appendChild(noEssaysMessage);
-                return;
-            }
-            
-            // 隐藏提示信息，显示范文列表
-            noEssaysMessage.classList.add('hidden');
-            essaysContainer.innerHTML = '';
-            
-            currentEssays.forEach((essay, index) => {
-                const essayItem = document.createElement('div');
-                essayItem.className = 'essay-item';
-                essayItem.innerHTML = `
-                    <div class="flex justify-between items-start mb-2">
-                        <div>
-                            <span class="font-medium">作者：${essay.author}</span>
-                            <span class="ml-4 text-gray-600">指导老师：${essay.instructor}</span>
-                        </div>
-                        <div class="flex space-x-1">
-                            <button class="text-primary hover:text-blue-600 edit-essay-btn" data-index="${index}">
-                                <i class="fa fa-pencil"></i>
-                            </button>
-                            <button class="text-danger hover:text-red-600 delete-essay-btn" data-index="${index}">
-                                <i class="fa fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="text-sm text-gray-700 line-clamp-3">
-                        ${essay.content || '无内容'}
-                    </div>
-                `;
-                essaysContainer.appendChild(essayItem);
-            });
-            
-            // 为编辑和删除按钮添加事件
-            document.querySelectorAll('.edit-essay-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const index = parseInt(btn.dataset.index);
-                    openEssayEditModal(index);
-                });
-            });
-            
-            document.querySelectorAll('.delete-essay-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const index = parseInt(btn.dataset.index);
-                    if (confirm('确定要删除这篇范文吗？')) {
-                        currentEssays.splice(index, 1);
-                        renderEssays();
+            } else {
+                // 隐藏提示信息，显示范文列表
+                noEssaysMessage.classList.add('hidden');
+                essaysContainer.innerHTML = '';
+                
+                currentEssays.forEach((essay, index) => {
+                    // 生成星级显示
+                    let ratingHtml = '';
+                    for (let i = 1; i <= 5; i++) {
+                        ratingHtml += `<i class="fa fa-star ${i <= essay.rating ? 'text-yellow-400' : 'text-gray-300'}"></i>`;
                     }
+                    
+                    const essayItem = document.createElement('div');
+                    essayItem.className = 'essay-item';
+                    essayItem.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="font-medium">作者：${essay.author}</span>
+                                <span class="ml-4 text-gray-600">来源：${essay.source}</span>
+                            </div>
+                            <div class="flex space-x-1">
+                                <button class="text-primary hover:text-blue-600 edit-essay-btn" data-index="${index}">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <button class="text-danger hover:text-red-600 delete-essay-btn" data-index="${index}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <span class="text-sm text-gray-600">力荐老师：${essay.recommendationTeacher}</span>
+                            <div class="inline-block ml-3">${ratingHtml}</div>
+                        </div>
+                        <div class="text-sm text-gray-700 line-clamp-3">
+                            ${essay.content || '无内容'}
+                        </div>
+                    `;
+                    essaysContainer.appendChild(essayItem);
                 });
-            });
+                
+                // 为编辑和删除按钮添加事件
+                document.querySelectorAll('.edit-essay-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.dataset.index);
+                        openEssayEditModal(index);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-essay-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.dataset.index);
+                        if (confirm('确定要删除这篇范文吗？删除后将无法恢复。')) {
+                            currentEssays.splice(index, 1);
+                            renderEssays();
+                        }
+                    });
+                });
+            }
         }
 
         // 打开范文编辑模态框
         function openEssayEditModal(index) {
-            // 重置表单
+            // 重置表单和星级
             editEssayForm.reset();
+            essayStars.forEach(star => star.classList.remove('filled'));
             
             if (index === -1) {
                 // 新增范文
                 essayModalTitle.textContent = '添加优秀范文';
                 document.getElementById('essay-index').value = -1;
+                essayRatingInput.value = 0;
             } else {
                 // 编辑现有范文
                 essayModalTitle.textContent = '编辑优秀范文';
                 document.getElementById('essay-index').value = index;
                 
                 const essay = currentEssays[index];
+                document.getElementById('essay-source').value = essay.source || '';
+                document.getElementById('essay-recommendation-teacher').value = essay.recommendationTeacher || '';
                 document.getElementById('essay-author').value = essay.author || '';
                 document.getElementById('essay-instructor').value = essay.instructor || '';
                 document.getElementById('essay-content').value = essay.content || '';
+                
+                // 设置星级评分
+                const rating = essay.rating || 0;
+                essayRatingInput.value = rating;
+                essayStars.forEach(star => {
+                    if (star.dataset.rating <= rating) {
+                        star.classList.add('filled');
+                    }
+                });
             }
             
             editEssayModal.classList.add('show');
@@ -660,9 +703,6 @@
                         name: subthemeName,
                         content: {
                             paperId: '',
-                            source: '',
-                            recommendationTeacher: '',
-                            rating: 0,
                             essays: []
                         }
                     };
@@ -671,9 +711,6 @@
                     renderThemes();
                     addSubjectModal.classList.remove('show');
                     addSubjectForm.reset();
-                    
-                    // 显示成功提示
-                    alert('子主题添加成功！');
                 }
             });
             
@@ -690,45 +727,33 @@
             editContentForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 
-                // 验证是否有至少一篇范文
-                if (currentEssays.length === 0) {
-                    alert('请至少添加一篇优秀范文');
-                    return;
-                }
-                
                 const themeId = document.getElementById('edit-subject-id').value;
                 const subthemeId = document.getElementById('edit-subtheme-id').value;
                 const paperId = document.getElementById('paper-id').value;
-                const source = document.getElementById('source').value;
-                const recommendationTeacher = document.getElementById('recommendation-teacher').value;
-                const rating = document.getElementById('rating').value;
                 
                 const theme = themesData.find(t => t.id === themeId);
                 if (theme) {
                     const subtheme = theme.subThemes.find(st => st.id === subthemeId);
                     if (subtheme) {
+                        // 保存Paper ID
                         subtheme.content.paperId = paperId;
-                        subtheme.content.source = source;
-                        subtheme.content.recommendationTeacher = recommendationTeacher;
-                        subtheme.content.rating = parseInt(rating);
-                        subtheme.content.essays = [...currentEssays]; // 保存所有范文
+                        
+                        // 保存范文列表
+                        subtheme.content.essays = [...currentEssays];
                         
                         renderThemes();
                         editContentModal.classList.remove('show');
-                        
-                        // 显示成功提示
-                        alert('内容保存成功！');
                     }
                 }
             });
             
-            // 星级评分
-            stars.forEach(star => {
+            // 范文星级评分
+            essayStars.forEach(star => {
                 star.addEventListener('click', () => {
                     const rating = star.dataset.rating;
-                    ratingInput.value = rating;
+                    essayRatingInput.value = rating;
                     
-                    stars.forEach(s => {
+                    essayStars.forEach(s => {
                         if (s.dataset.rating <= rating) {
                             s.classList.add('filled');
                         } else {
@@ -766,17 +791,28 @@
                 e.preventDefault();
                 
                 const index = parseInt(document.getElementById('essay-index').value);
+                const source = document.getElementById('essay-source').value;
+                const recommendationTeacher = document.getElementById('essay-recommendation-teacher').value;
+                const rating = document.getElementById('essay-rating').value;
                 const author = document.getElementById('essay-author').value;
                 const instructor = document.getElementById('essay-instructor').value;
                 const content = document.getElementById('essay-content').value;
                 
                 // 简单验证
-                if (!author || !instructor || !content) {
-                    alert('请填写完整的范文信息');
+                if (!source || !recommendationTeacher || !rating || rating == 0 || 
+                    !author || !instructor || !content) {
+                    alert('请填写完整的范文信息，包括带*的必填项和至少1星的评分');
                     return;
                 }
                 
-                const essay = { author, instructor, content };
+                const essay = { 
+                    source, 
+                    recommendationTeacher, 
+                    rating: parseInt(rating),
+                    author, 
+                    instructor, 
+                    content 
+                };
                 
                 if (index === -1) {
                     // 新增范文
@@ -821,19 +857,6 @@
                     editModalTitle.textContent = `${theme.name} - ${subtheme.name}`;
                     
                     document.getElementById('paper-id').value = subtheme.content.paperId || '';
-                    document.getElementById('source').value = subtheme.content.source || '';
-                    document.getElementById('recommendation-teacher').value = subtheme.content.recommendationTeacher || '';
-                    
-                    // 设置星级评分
-                    const rating = subtheme.content.rating || 0;
-                    ratingInput.value = rating;
-                    stars.forEach(star => {
-                        if (star.dataset.rating <= rating) {
-                            star.classList.add('filled');
-                        } else {
-                            star.classList.remove('filled');
-                        }
-                    });
                     
                     // 渲染范文列表
                     renderEssays();
