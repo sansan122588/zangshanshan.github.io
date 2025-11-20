@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>证书详情 - 证书查询系统</title>
+    <!-- Tailwind CSS v3 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 统一的 Tailwind 配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af',
+                        secondary: '#3b82f6',
+                        accent: '#60a5fa',
+                        neutral: '#f1f5f9',
+                        'neutral-dark': '#94a3b8'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            }
+            .transition-all-300 {
+                transition: all 0.3s ease;
+            }
+            .scale-on-hover:hover {
+                transform: scale(1.02);
+            }
+            .certificate-container {
+                perspective: 1000px;
+            }
+            .certificate-inner {
+                transition: transform 0.6s;
+                transform-style: preserve-3d;
+            }
+            .certificate-container:hover .certificate-inner {
+                transform: rotateY(10deg);
+            }
+            .certificate-zoom {
+                transition: transform 0.3s ease;
+            }
+            .certificate-zoom:hover {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 页面容器 -->
+    <div class="min-h-screen flex flex-col">
+        <!-- Banner 区域 -->
+        <header class="w-full">
+            <div class="relative">
+                <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/super_tool/acc330daf20b419c86f187335f554dbf~tplv-a9rns2rl98-image.image?rcl=202511201851033C72AAF7E2170FEF3904&rk3s=8e244e95&rrcfp=f06b921b&x-expires=1766227877&x-signature=J5WrvJv5tCgAkGHN59fx6M%2F0MQQ%3D" 
+                     alt="证书查询系统" 
+                     class="w-full h-auto object-cover">
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="flex-grow container mx-auto px-4 py-8">
+            <!-- 标题区域 -->
+            <div class="text-center mb-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-primary mb-2">证书详情</h1>
+                <p class="text-neutral-dark max-w-2xl mx-auto">查看您的证书信息并下载</p>
+            </div>
+
+            <!-- 返回按钮 -->
+            <div class="mb-8">
+                <a href="index.html" class="inline-flex items-center text-primary hover:text-primary/80 transition-all-300">
+                    <i class="fa fa-arrow-left mr-2"></i> 返回查询页面
+                </a>
+            </div>
+
+            <!-- 证书展示区域 -->
+            <div id="certificateSection" class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-card overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-2xl font-bold text-primary flex items-center">
+                            <i class="fa fa-certificate mr-2"></i> 证书信息
+                        </h2>
+                    </div>
+                    
+                    <div class="p-6 md:p-8">
+                        <!-- 证书预览 -->
+                        <div class="certificate-container mb-8 flex justify-center">
+                            <div class="certificate-inner relative w-full max-w-2xl overflow-hidden rounded-lg shadow-lg">
+                                <div class="certificate-zoom overflow-hidden">
+                                    <img id="certificateImage" src="" 
+                                         alt="证书预览" 
+                                         class="w-full h-auto">
+                                </div>
+                                <div class="absolute inset-0 bg-black bg-opacity-10 flex items-center justify-center opacity-0 hover:opacity-100 transition-all-300">
+                                    <span class="text-white text-lg font-medium">
+                                        <i class="fa fa-search-plus mr-2"></i> 点击放大查看
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 证书信息 -->
+                        <div class="bg-neutral rounded-lg p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">证书详情</h3>
+                            <div class="space-y-3">
+                                <div class="flex flex-col md:flex-row md:items-center">
+                                    <span class="text-gray-600 w-24">姓名：</span>
+                                    <span id="certName" class="font-medium"></span>
+                                </div>
+                                <div class="flex flex-col md:flex-row md:items-center">
+                                    <span class="text-gray-600 w-24">证书类型：</span>
+                                    <span id="certType" class="font-medium"></span>
+                                </div>
+                                <div class="flex flex-col md:flex-row md:items-center">
+                                    <span class="text-gray-600 w-24">颁发日期：</span>
+                                    <span id="certDate" class="font-medium"></span>
+                                </div>
+                                <div class="flex flex-col md:flex-row md:items-center">
+                                    <span class="text-gray-600 w-24">证书编号：</span>
+                                    <span id="certNumber" class="font-medium"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button id="downloadBtn" 
+                                class="flex-1 bg-secondary hover:bg-secondary/90 text-white font-medium py-3 px-4 rounded-md transition-all-300 flex items-center justify-center">
+                                <i class="fa fa-download mr-2"></i> 下载证书
+                            </button>
+                            <button id="printBtn" 
+                                class="flex-1 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-md transition-all-300 flex items-center justify-center">
+                                <i class="fa fa-print mr-2"></i> 打印证书
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 无证书提示 -->
+            <div id="noCertificateSection" class="max-w-md mx-auto bg-white rounded-lg shadow-card p-6 md:p-8 text-center hidden">
+                <div class="text-6xl text-neutral-dark mb-4">
+                    <i class="fa fa-exclamation-circle"></i>
+                </div>
+                <h2 class="text-xl font-bold text-gray-800 mb-2">未找到证书</h2>
+                <p class="text-gray-600 mb-6">根据您提供的信息，未查询到相关证书。请检查您的信息是否正确，或联系客服获取帮助。</p>
+                <a href="index.html" 
+                    class="bg-primary hover:bg-primary/90 text-white font-medium py-2.5 px-4 rounded-md transition-all-300 inline-block">
+                    返回重新查询
+                </a>
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="bg-gray-800 text-white py-8">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <h3 class="text-lg font-semibold mb-2">证书查询系统</h3>
+                        <p class="text-gray-400 text-sm">提供便捷的证书查询和下载服务</p>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <p class="text-gray-400 text-sm mb-1">© 2025 证书查询系统 版权所有</p>
+                        <p class="text-gray-400 text-sm">技术支持：400-123-4567</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- 证书放大查看模态框 -->
+    <div id="certificateModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+        <div class="relative max-w-5xl w-full mx-4">
+            <button id="closeModal" class="absolute -top-10 right-0 text-white text-2xl hover:text-gray-300 transition-all-300">
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="bg-white p-2 rounded-lg">
+                <img id="modalCertificateImage" src="" 
+                     alt="证书放大查看" 
+                     class="w-full h-auto">
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // DOM 元素
+        const certificateSection = document.getElementById('certificateSection');
+        const noCertificateSection = document.getElementById('noCertificateSection');
+        const certName = document.getElementById('certName');
+        const certType = document.getElementById('certType');
+        const certDate = document.getElementById('certDate');
+        const certNumber = document.getElementById('certNumber');
+        const certificateImage = document.getElementById('certificateImage');
+        const modalCertificateImage = document.getElementById('modalCertificateImage');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const printBtn = document.getElementById('printBtn');
+        const certificateModal = document.getElementById('modalCertificateImage');
+        const closeModal = document.getElementById('closeModal');
+        const certificateInner = document.querySelector('.certificate-inner');
+
+        // 从 URL 获取证书数据
+        function getCertificateData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const certData = {
+                name: urlParams.get('name'),
+                type: urlParams.get('type'),
+                date: urlParams.get('date'),
+                number: urlParams.get('number'),
+                image: urlParams.get('image')
+            };
+            
+            // 检查数据是否完整
+            if (!certData.name || !certData.type || !certData.date || !certData.number || !certData.image) {
+                return null;
+            }
+            
+            return certData;
+        }
+
+        // 显示证书信息
+        function displayCertificate(data) {
+            // 填充证书信息
+            certName.textContent = data.name;
+            certType.textContent = data.type;
+            certDate.textContent = data.date;
+            certNumber.textContent = data.number;
+            certificateImage.src = data.image;
+            modalCertificateImage.src = data.image;
+            
+            // 显示证书区域，隐藏无证书提示
+            certificateSection.classList.remove('hidden');
+            noCertificateSection.classList.add('hidden');
+        }
+
+        // 显示无证书提示
+        function showNoCertificate() {
+            // 隐藏证书区域，显示无证书提示
+            certificateSection.classList.add('hidden');
+            noCertificateSection.classList.remove('hidden');
+        }
+
+        // 下载证书
+        downloadBtn.addEventListener('click', function() {
+            // 模拟下载
+            this.disabled = true;
+            this.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i> 下载中...';
+            
+            // 创建一个虚拟的下载链接
+            const link = document.createElement('a');
+            link.href = certificateImage.src;
+            link.download = `${certName.textContent}_${certType.textContent}.png`;
+            
+            // 添加错误处理
+            link.addEventListener('error', function() {
+                // 恢复按钮状态
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '<i class="fa fa-download mr-2"></i> 下载证书';
+                
+                // 显示下载失败提示
+                alert('证书下载失败，请稍后重试');
+            });
+            
+            document.body.appendChild(link);
+            
+            // 使用setTimeout确保链接已添加到DOM
+            setTimeout(() => {
+                link.click();
+                document.body.removeChild(link);
+                
+                // 恢复按钮状态
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '<i class="fa fa-download mr-2"></i> 下载证书';
+                
+                // 显示下载成功提示
+                alert('证书下载成功');
+            }, 100);
+        });
+
+        // 打印证书
+        printBtn.addEventListener('click', function() {
+            // 打开证书放大模态框
+            certificateModal.classList.remove('hidden');
+            
+            // 延迟执行打印，确保图片已加载
+            setTimeout(() => {
+                // 调用浏览器打印功能
+                window.print();
+                
+                // 关闭模态框
+                certificateModal.classList.add('hidden');
+            }, 500);
+        });
+
+        // 打开证书放大模态框
+        certificateInner.addEventListener('click', function() {
+            document.getElementById('certificateModal').classList.remove('hidden');
+        });
+
+        // 关闭证书放大模态框
+        closeModal.addEventListener('click', function() {
+            document.getElementById('certificateModal').classList.add('hidden');
+        });
+
+        // 点击模态框背景关闭
+        document.getElementById('certificateModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+
+        // 键盘 ESC 关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !document.getElementById('certificateModal').classList.contains('hidden')) {
+                document.getElementById('certificateModal').classList.add('hidden');
+            }
+        });
+
+        // 页面加载时获取并显示证书数据
+        window.addEventListener('load', function() {
+            const certData = getCertificateData();
+            
+            if (certData) {
+                displayCertificate(certData);
+            } else {
+                showNoCertificate();
+            }
+        });
+    </script>
+</body>
+</html>
